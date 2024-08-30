@@ -4,14 +4,15 @@ interface Coordinates {
 }
 
 interface MarkerProps {
-  id: string;
+  id?: string;
   lat: number;
   lng: number;
-  color?: string;
-  title?: string;
+  color: string;
+  title: string;
 }
 
 interface MapComponentProps {
+  setCoordinate?: React.Dispatch<React.SetStateAction<Coordinates | null>>;
   markers: MarkerProps[];
-  onMapClick: (coords: Coordinates) => void;
+  onMapClick?: (coords: Coordinates) => void;
 }

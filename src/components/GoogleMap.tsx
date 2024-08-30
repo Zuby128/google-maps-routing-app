@@ -1,12 +1,4 @@
-import React from "react";
-import { MapProvider } from "../providers/map-providers";
-import {
-  Circle,
-  GoogleMap,
-  InfoBox,
-  InfoWindow,
-  Marker,
-} from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, Marker } from "@react-google-maps/api";
 import { Container } from "@chakra-ui/react";
 
 export const defaultMapContainerStyle = {
@@ -27,7 +19,11 @@ const defaultMapOptions = {
   // mapTypeId: "satellite",
 };
 
-const GoogleMapComponent: React.FC<MapComponentProps> = ({ markers }) => {
+const GoogleMapComponent: React.FC<MapComponentProps> = ({
+  markers,
+  setCoordinate,
+  onMapClick,
+}) => {
   const onLoad = (infoBox: any) => {
     console.log("infoBox: ", infoBox);
   };
@@ -38,12 +34,18 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({ markers }) => {
   };
 
   return (
-    <Container maxW={"3xl"}>
+    <Container maxW={"1200px"}>
       <GoogleMap
         mapContainerStyle={defaultMapContainerStyle}
         center={defaultMapCenter}
         zoom={defaultMapZoom}
         options={defaultMapOptions}
+        onClick={(e: google.maps.MapMouseEvent) =>
+          setCoordinate!({
+            lat: e.latLng?.lat() as number,
+            lng: e.latLng?.lng() as number,
+          })
+        }
       >
         <Marker
           onLoad={onLoad}
