@@ -24,9 +24,10 @@ const COLORS = ["red", "blue", "yellow", "green"];
 
 interface Props {
   coordinate: Coordinates | null;
+  id?: string;
 }
 
-const AddForm: React.FC<Props> = ({ coordinate }) => {
+const AddForm: React.FC<Props> = ({ coordinate, id }) => {
   const validationSchema = Yup.object({
     lat: Yup.number().required("Latitude is required"),
     lng: Yup.number().required("Longitude is required"),
@@ -38,15 +39,15 @@ const AddForm: React.FC<Props> = ({ coordinate }) => {
     initialValues,
     validationSchema,
     onSubmit: (values, helpers): void => {
-      const id = uuidv4();
-      const newMarker = { ...values, id };
+      const idNum = id || uuidv4();
+      const newMarker = { ...values, id: idNum };
 
       const markers = JSON.parse(
         window.localStorage.getItem("markers") || `[]`
       );
       const newMarkerList = JSON.stringify([...markers, newMarker]);
 
-      window.localStorage.setItem("marker", newMarkerList);
+      window.localStorage.setItem("markers", newMarkerList);
 
       setTimeout(() => {
         formik.resetForm();

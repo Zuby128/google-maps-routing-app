@@ -1,10 +1,9 @@
 "use client";
-import * as Yup from "yup";
-import { useFormik } from "formik";
-import { Box, FormControl } from "@chakra-ui/react";
+
+import { Box } from "@chakra-ui/react";
 import { MapProvider } from "@/src/providers/map-providers";
 import GoogleMapComponent from "@/src/components/GoogleMap";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AddForm from "@/src/components/AddForm";
 
 function AddLocation() {
