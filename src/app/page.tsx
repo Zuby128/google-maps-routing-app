@@ -1,9 +1,17 @@
-import Map from "../components/Map";
+"use client";
+import GoogleMapComponent from "../components/GoogleMap";
+import { MapProvider } from "../providers/map-providers";
+
+// const GoogleMapComponent = dynamic(() => import("../components/GoogleMap"), {
+//   ssr: false,
+// });
 
 export default function Home() {
   return (
     <>
-      <Map />
+      <MapProvider>
+        <GoogleMapComponent />
+      </MapProvider>
     </>
   );
 }
