@@ -19,7 +19,7 @@ export function MapProvider({ children }: { children: ReactNode }) {
 
   if (!scriptLoaded)
     return (
-      <Box width="100%" height="100vh">
+      <Box width="100%" height="50vh">
         <Center width="100%" height="100%">
           <CircularProgress isIndeterminate color="green.300" />
         </Center>
