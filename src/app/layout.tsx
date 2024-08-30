@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
+import Header from "../components/Header";
+import { Container } from "@chakra-ui/react";
 
 export const metadata: Metadata = {
   title: "YUKAtech",
@@ -14,7 +16,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          <Container maxW={"1200px"} width={"100%"}>
+            {children}
+          </Container>
+        </Providers>
       </body>
     </html>
   );

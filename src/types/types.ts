@@ -9,7 +9,6 @@ interface MarkerProps {
   lng: number;
   color?: string;
   title?: string;
-  description?: string;
 }
 
 interface MapComponentProps {
