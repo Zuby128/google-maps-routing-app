@@ -11,6 +11,7 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
+import { v4 as uuidv4 } from "uuid";
 
 const initialValues: MarkerProps = {
   lat: 0,
@@ -37,7 +38,7 @@ const AddForm: React.FC<Props> = ({ coordinate }) => {
     initialValues,
     validationSchema,
     onSubmit: (values, helpers): void => {
-      const id = "";
+      const id = uuidv4();
       const newMarker = { ...values, id };
 
       const markers = JSON.parse(
