@@ -22,14 +22,12 @@ const defaultMapOptions = {
   zoomControl: true,
   tilt: 0,
   gestureHandling: "auto",
-  // mapTypeId: "satellite",
 };
 
 const GoogleMapComponent: React.FC<MapComponentProps> = ({
   markers,
   setCoordinate,
   coordinate,
-  onMapClick,
 }) => {
   const [selectedMarker, setSelectedMarker] = useState<MarkerProps | null>(
     null

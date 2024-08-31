@@ -1,5 +1,5 @@
 "use client";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 
 interface Props {
@@ -25,17 +25,25 @@ const ClickedPin: React.FC<Props> = ({ coordinate, children }) => {
             position="absolute"
             top="50%"
             transform="translateY(-50%)"
-            left="30px"
-            display="flex"
+            left="35px"
             alignItems="center"
-            maxWidth="200px"
+            w={[55, 150, 200]}
           >
-            <Text overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-              {coordinate.lat}
+            <Text
+              fontSize="xs"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              lat: {coordinate.lat}
             </Text>
-            ,{" "}
-            <Text overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
-              {coordinate.lng}
+            <Text
+              fontSize="xs"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              lng: {coordinate.lng}
             </Text>
           </Box>
         )}
