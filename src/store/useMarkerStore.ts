@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 
 interface Coordinates {
@@ -23,13 +23,18 @@ interface MarkerState {
 }
 
 export const useMarkerStore = create<MarkerState>((set, get) => ({
-  markers: JSON.parse(localStorage.getItem("markers") || "[]"),
+  markers:
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("markers") || "[]")
+      : [],
   coordinate: null,
 
   addMarker: (marker: Omit<MarkerProps, "id">) => {
     const newMarker: MarkerProps = { ...marker, id: uuidv4() };
     const updatedMarkers = [...get().markers, newMarker];
-    localStorage.setItem("markers", JSON.stringify(updatedMarkers));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("markers", JSON.stringify(updatedMarkers));
+    }
     set({ markers: updatedMarkers });
   },
 
@@ -37,13 +42,17 @@ export const useMarkerStore = create<MarkerState>((set, get) => ({
     const updatedMarkers = get().markers.map((marker) =>
       marker.id === updatedMarker.id ? updatedMarker : marker
     );
-    localStorage.setItem("markers", JSON.stringify(updatedMarkers));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("markers", JSON.stringify(updatedMarkers));
+    }
     set({ markers: updatedMarkers });
   },
 
   deleteMarker: (id: string) => {
     const updatedMarkers = get().markers.filter((marker) => marker.id !== id);
-    localStorage.setItem("markers", JSON.stringify(updatedMarkers));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("markers", JSON.stringify(updatedMarkers));
+    }
     set({ markers: updatedMarkers });
   },
 

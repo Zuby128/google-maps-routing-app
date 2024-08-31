@@ -59,11 +59,7 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
     validationSchema,
     onSubmit: (values, helpers): void => {
       const idNum = id || uuidv4();
-      const newMarker = { ...values, id: idNum };
 
-      const markers = JSON.parse(
-        window.localStorage.getItem("markers") || `[]`
-      );
       if (id) {
         updateMarker({ ...values, id });
       } else {
