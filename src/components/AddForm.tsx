@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -13,14 +13,14 @@ import {
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
 
-const initialValues: MarkerProps = {
+const initialValue: MarkerProps = {
   lat: 0,
   lng: 0,
   color: "red",
   title: "",
 };
 
-const COLORS = ["red", "blue", "yellow", "green"];
+const COLORS = ["red", "blue", "purple"];
 
 interface Props {
   coordinate: Coordinates | null;
@@ -28,12 +28,30 @@ interface Props {
 }
 
 const AddForm: React.FC<Props> = ({ coordinate, id }) => {
+  const [initialValues, setInitialValues] = useState<MarkerProps>(initialValue);
   const validationSchema = Yup.object({
     lat: Yup.number().required("Latitude is required"),
     lng: Yup.number().required("Longitude is required"),
     color: Yup.string().required("Color is required"),
     title: Yup.string().required("Title is required"),
   });
+
+  useEffect(() => {
+    if (id) {
+      const list: MarkerProps[] = JSON.parse(
+        window.localStorage.getItem("markers") || `[]`
+      );
+      if (list.length === 0) {
+        setInitialValues(initialValue);
+      } else {
+        const marker = list.find((v) => (v.id = id));
+        setInitialValues(marker || initialValue);
+        formik.setValues(marker || initialValue);
+      }
+    } else {
+      setInitialValues(initialValue);
+    }
+  }, [id, typeof window]);
 
   const formik = useFormik({
     initialValues,
@@ -45,9 +63,14 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
       const markers = JSON.parse(
         window.localStorage.getItem("markers") || `[]`
       );
-      const newMarkerList = JSON.stringify([...markers, newMarker]);
-
-      window.localStorage.setItem("markers", newMarkerList);
+      if (id) {
+        const filteredList = markers.filter((v: MarkerProps) => v.id !== id);
+        const newMarkerList = JSON.stringify([...filteredList, newMarker]);
+        window.localStorage.setItem("markers", newMarkerList);
+      } else {
+        const newMarkerList = JSON.stringify([...markers, newMarker]);
+        window.localStorage.setItem("markers", newMarkerList);
+      }
 
       setTimeout(() => {
         formik.resetForm();
@@ -128,7 +151,7 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
           size="md"
           onClick={formik.submitForm}
         >
-          Button
+          Save
         </Button>
       </form>
     </Container>

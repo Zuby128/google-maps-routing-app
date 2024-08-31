@@ -1,6 +1,6 @@
 "use client";
 import ClickedPin from "@/src/components/ClickedPin";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { ArrowForwardIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Alert,
   AlertIcon,
@@ -32,6 +32,16 @@ function Locations() {
     }
   }, [typeof window]);
 
+  const handleDelete = (id: string) => {
+    if (!id) return;
+    const list = JSON.parse(window.localStorage.getItem("markers") || `[]`);
+    const newList = list.filter((v: MarkerProps) => v.id !== id);
+
+    window.localStorage.setItem("markers", JSON.stringify(newList));
+
+    getMarkers();
+  };
+
   return (
     <Container padding={4}>
       {markers.length === 0 && (
@@ -50,11 +60,18 @@ function Locations() {
                   src={`http://maps.google.com/mapfiles/ms/icons/${v.color}-pushpin.png`}
                 />
               </ClickedPin>
-              <IconButton
-                aria-label="Search database"
-                icon={<ArrowForwardIcon />}
-                onClick={() => router.push(`/locations/${v.id}`)}
-              />
+              <Box gap={2}>
+                <IconButton
+                  aria-label="delete marker"
+                  icon={<DeleteIcon color="red" />}
+                  onClick={() => handleDelete(v.id as string)}
+                />
+                <IconButton
+                  aria-label="go to locations"
+                  icon={<ArrowForwardIcon />}
+                  onClick={() => router.push(`/locations/${v.id}`)}
+                />
+              </Box>
             </Flex>
           </CardBody>
         </Card>
