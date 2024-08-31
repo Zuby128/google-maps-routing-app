@@ -12,7 +12,11 @@ function AddLocation() {
     <>
       <Box paddingTop={"10px"}>
         <MapProvider>
-          <GoogleMapComponent markers={[]} setCoordinate={setCoordinate} />
+          <GoogleMapComponent
+            markers={[]}
+            setCoordinate={setCoordinate}
+            coordinate={coordinate}
+          />
         </MapProvider>
       </Box>
       <AddForm coordinate={coordinate} />

@@ -1,5 +1,6 @@
 "use client";
 import ClickedPin from "@/src/components/ClickedPin";
+import { useMarkerStore } from "@/src/store/useMarkerStore";
 import { ArrowForwardIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Alert,
@@ -18,28 +19,11 @@ import React, { useEffect, useState } from "react";
 
 function Locations() {
   const router = useRouter();
-  const [markers, setMarkers] = useState<MarkerProps[]>([]);
-  const getMarkers = () => {
-    const list = JSON.parse(window.localStorage.getItem("markers") || `[]`);
-
-    setMarkers(list);
-  };
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      getMarkers();
-      console.log(window.localStorage.getItem("markers"));
-    }
-  }, [typeof window]);
+  const { markers, deleteMarker } = useMarkerStore();
 
   const handleDelete = (id: string) => {
     if (!id) return;
-    const list = JSON.parse(window.localStorage.getItem("markers") || `[]`);
-    const newList = list.filter((v: MarkerProps) => v.id !== id);
-
-    window.localStorage.setItem("markers", JSON.stringify(newList));
-
-    getMarkers();
+    deleteMarker(id);
   };
 
   return (
@@ -62,6 +46,7 @@ function Locations() {
               </ClickedPin>
               <Box gap={2}>
                 <IconButton
+                  backgroundColor="transparent"
                   aria-label="delete marker"
                   icon={<DeleteIcon color="red" />}
                   onClick={() => handleDelete(v.id as string)}

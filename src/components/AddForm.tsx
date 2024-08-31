@@ -12,6 +12,7 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { v4 as uuidv4 } from "uuid";
+import { useMarkerStore } from "../store/useMarkerStore";
 
 const initialValue: MarkerProps = {
   lat: 0,
@@ -28,7 +29,10 @@ interface Props {
 }
 
 const AddForm: React.FC<Props> = ({ coordinate, id }) => {
+  const { addMarker, updateMarker, deleteMarker, getMarkerById } =
+    useMarkerStore();
   const [initialValues, setInitialValues] = useState<MarkerProps>(initialValue);
+
   const validationSchema = Yup.object({
     lat: Yup.number().required("Latitude is required"),
     lng: Yup.number().required("Longitude is required"),
@@ -38,15 +42,12 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
 
   useEffect(() => {
     if (id) {
-      const list: MarkerProps[] = JSON.parse(
-        window.localStorage.getItem("markers") || `[]`
-      );
-      if (list.length === 0) {
-        setInitialValues(initialValue);
+      const marker = getMarkerById(id);
+      if (marker) {
+        setInitialValues(marker);
+        formik.setValues(marker);
       } else {
-        const marker = list.find((v) => (v.id = id));
-        setInitialValues(marker || initialValue);
-        formik.setValues(marker || initialValue);
+        setInitialValues(initialValue);
       }
     } else {
       setInitialValues(initialValue);
@@ -64,12 +65,9 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
         window.localStorage.getItem("markers") || `[]`
       );
       if (id) {
-        const filteredList = markers.filter((v: MarkerProps) => v.id !== id);
-        const newMarkerList = JSON.stringify([...filteredList, newMarker]);
-        window.localStorage.setItem("markers", newMarkerList);
+        updateMarker({ ...values, id });
       } else {
-        const newMarkerList = JSON.stringify([...markers, newMarker]);
-        window.localStorage.setItem("markers", newMarkerList);
+        addMarker(values);
       }
 
       setTimeout(() => {
@@ -150,6 +148,7 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
           colorScheme="teal"
           size="md"
           onClick={formik.submitForm}
+          w="100%"
         >
           Save
         </Button>

@@ -22,7 +22,7 @@ export default function Home() {
             fontSize={{ base: "2xl", sm: "4xl", md: "6xl" }}
             lineHeight={"110%"}
           >
-            Lets make it <br />
+            Lets make it!!! <br />
             <Text as={"span"} color={"green.400"}>
               Draw shortest route together
             </Text>
