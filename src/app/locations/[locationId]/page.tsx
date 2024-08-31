@@ -18,7 +18,7 @@ function EditLocation() {
           width="100%"
           color="white"
           backgroundColor="red"
-          onClick={() => route.push("/create-route-lines")}
+          onClick={() => route.push("/locations-map")}
         >
           Show Route
         </Button>

@@ -13,6 +13,7 @@ interface MarkerProps {
 
 interface MapComponentProps {
   setCoordinate?: React.Dispatch<React.SetStateAction<Coordinates | null>>;
+  coordinate?: Coordinates | null;
   markers: MarkerProps[];
   onMapClick?: (coords: Coordinates) => void;
 }
