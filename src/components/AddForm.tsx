@@ -11,8 +11,8 @@ import {
   Input,
   Select,
 } from "@chakra-ui/react";
-import { v4 as uuidv4 } from "uuid";
 import { useMarkerStore } from "../store/useMarkerStore";
+import { toast } from "sonner";
 
 const initialValue: MarkerProps = {
   lat: 0,
@@ -29,8 +29,7 @@ interface Props {
 }
 
 const AddForm: React.FC<Props> = ({ coordinate, id }) => {
-  const { addMarker, updateMarker, deleteMarker, getMarkerById } =
-    useMarkerStore();
+  const { addMarker, updateMarker, getMarkerById } = useMarkerStore();
   const [initialValues, setInitialValues] = useState<MarkerProps>(initialValue);
 
   const validationSchema = Yup.object({
@@ -43,40 +42,36 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
   useEffect(() => {
     if (id) {
       const marker = getMarkerById(id);
-      if (marker) {
-        setInitialValues(marker);
-        formik.setValues(marker);
-      } else {
-        setInitialValues(initialValue);
-      }
+      marker ? formik.setValues(marker) : setInitialValues(initialValue);
     } else {
       setInitialValues(initialValue);
     }
-  }, [id, typeof window]);
+  }, [id, getMarkerById]);
 
   const formik = useFormik({
     initialValues,
     validationSchema,
     onSubmit: (values, helpers): void => {
-      const idNum = id || uuidv4();
+      try {
+        if (id) {
+          updateMarker({ ...values, id });
+        } else {
+          addMarker(values);
+        }
 
-      if (id) {
-        updateMarker({ ...values, id });
-      } else {
-        addMarker(values);
+        setTimeout(() => {
+          formik.resetForm();
+          toast.success("SUCCESS", { duration: 2000 });
+        }, 200);
+      } catch (error) {
+        toast.error("SOMETHING WENT WRONG", { duration: 2000 });
       }
-
-      setTimeout(() => {
-        formik.resetForm();
-      }, 200);
     },
   });
 
   useEffect(() => {
-    if (coordinate) {
-      formik.setFieldValue("lng", coordinate?.lng);
-      formik.setFieldValue("lat", coordinate?.lat);
-    }
+    coordinate && formik.setFieldValue("lng", coordinate?.lng);
+    coordinate && formik.setFieldValue("lat", coordinate?.lat);
   }, [coordinate]);
 
   return (

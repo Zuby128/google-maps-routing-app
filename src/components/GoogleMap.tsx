@@ -6,6 +6,8 @@ import {
 } from "@react-google-maps/api";
 import { Box, Container, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { usePathname } from "next/navigation";
 
 export const defaultMapContainerStyle = {
   width: "100%",
@@ -29,12 +31,38 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
   setCoordinate,
   coordinate,
 }) => {
+  const pathname = usePathname();
   const [selectedMarker, setSelectedMarker] = useState<MarkerProps | null>(
     null
   );
+  const [currentPosition, setCurrentPosition] = useState<Coordinates | null>(
+    null
+  );
   const [open, setOpen] = useState<boolean>(false);
-
   const [path, setPath] = useState<Coordinates[]>([]);
+
+  const getCurrentLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setCurrentPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+        },
+        (error) => {
+          toast.error(
+            `Error getting location: ${error.message}. \nPlease select your current location manually`,
+            {
+              duration: 5000,
+            }
+          );
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  };
 
   const calculateDistance = (coord1: Coordinates, coord2: Coordinates) => {
     const latLng1 = new google.maps.LatLng(coord1.lat, coord1.lng);
@@ -70,9 +98,19 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
     setPath(sortedPath);
   };
 
+  const openLocationInfo = () => {
+    setOpen((prevOpen) => !prevOpen);
+  };
+
   useEffect(() => {
     onSetPath();
   }, [coordinate]);
+
+  useEffect(() => {
+    if (pathname === "/locations-map") {
+      getCurrentLocation();
+    }
+  }, []);
 
   return (
     <Container maxW={"1200px"}>
@@ -134,15 +172,37 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
             icon={{
               url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
             }}
-            onClick={() => setOpen(!open)}
+            onClick={openLocationInfo}
           />
         )}
         {coordinate && open && (
-          <InfoWindow position={coordinate} onCloseClick={() => setOpen(!open)}>
+          <InfoWindow position={coordinate} onCloseClick={openLocationInfo}>
             <Box>
               <Text variant="h2">current location</Text>
               <Text>{`Latitude: ${coordinate.lat}`}</Text>
               <Text>{`Longitude: ${coordinate.lng}`}</Text>
+            </Box>
+          </InfoWindow>
+        )}
+
+        {currentPosition && (
+          <Marker
+            position={currentPosition}
+            icon={{
+              url: `http://maps.google.com/mapfiles/ms/icons/blue-dot.png`,
+            }}
+            onClick={openLocationInfo}
+          />
+        )}
+        {currentPosition && open && (
+          <InfoWindow
+            position={currentPosition}
+            onCloseClick={openLocationInfo}
+          >
+            <Box>
+              <Text variant="h2">Your Current Position</Text>
+              <Text>{`Latitude: ${currentPosition.lat}`}</Text>
+              <Text>{`Longitude: ${currentPosition.lng}`}</Text>
             </Box>
           </InfoWindow>
         )}

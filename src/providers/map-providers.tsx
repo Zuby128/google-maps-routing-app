@@ -4,7 +4,7 @@ import { Box, Center, CircularProgress } from "@chakra-ui/react";
 import { Libraries, useJsApiLoader } from "@react-google-maps/api";
 import { ReactNode } from "react";
 
-const libraries = ["places", "drawing", "geometry"];
+const libraries = ["places", "drawing", "geometry", "geocoding"];
 
 export function MapProvider({ children }: { children: ReactNode }) {
   const { isLoaded: scriptLoaded, loadError } = useJsApiLoader({
