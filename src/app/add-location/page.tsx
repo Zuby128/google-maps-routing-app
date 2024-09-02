@@ -8,6 +8,7 @@ import AddForm from "@/src/components/AddForm";
 
 function AddLocation() {
   const [coordinate, setCoordinate] = useState<Coordinates | null>(null);
+  const [dotColor, setDotColor] = useState<string>("");
   return (
     <>
       <Box paddingTop={"10px"}>
@@ -16,10 +17,11 @@ function AddLocation() {
             markers={[]}
             setCoordinate={setCoordinate}
             coordinate={coordinate}
+            dotColor={dotColor}
           />
         </MapProvider>
       </Box>
-      <AddForm coordinate={coordinate} />
+      <AddForm coordinate={coordinate} setDotColor={setDotColor} />
     </>
   );
 }

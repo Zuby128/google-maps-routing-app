@@ -26,9 +26,10 @@ const COLORS = ["red", "blue", "purple"];
 interface Props {
   coordinate: Coordinates | null;
   id?: string;
+  setDotColor?: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const AddForm: React.FC<Props> = ({ coordinate, id }) => {
+const AddForm: React.FC<Props> = ({ coordinate, id, setDotColor }) => {
   const { addMarker, updateMarker, getMarkerById } = useMarkerStore();
   const [initialValues, setInitialValues] = useState<MarkerProps>(initialValue);
 
@@ -73,6 +74,12 @@ const AddForm: React.FC<Props> = ({ coordinate, id }) => {
     coordinate && formik.setFieldValue("lng", coordinate?.lng);
     coordinate && formik.setFieldValue("lat", coordinate?.lat);
   }, [coordinate]);
+
+  useEffect(() => {
+    if (setDotColor) {
+      setDotColor(formik.values.color);
+    }
+  }, [formik.values.color]);
 
   return (
     <Container marginBottom={"10px"}>

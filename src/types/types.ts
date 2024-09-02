@@ -14,5 +14,6 @@ interface MarkerProps {
 interface MapComponentProps {
   setCoordinate?: React.Dispatch<React.SetStateAction<Coordinates | null>>;
   coordinate?: Coordinates | null;
+  dotColor?: string;
   markers: MarkerProps[];
 }

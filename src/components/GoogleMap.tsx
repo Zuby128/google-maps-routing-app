@@ -30,6 +30,7 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
   markers,
   setCoordinate,
   coordinate,
+  dotColor,
 }) => {
   const pathname = usePathname();
   const [selectedMarker, setSelectedMarker] = useState<MarkerProps | null>(
@@ -46,6 +47,10 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCurrentPosition({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          });
+          setCoordinate!({
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           });
@@ -166,16 +171,18 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
           </InfoWindow>
         )}
 
-        {coordinate && (
+        {!currentPosition && coordinate && (
           <Marker
             position={coordinate}
             icon={{
-              url: `http://maps.google.com/mapfiles/ms/icons/green-dot.png`,
+              url: `http://maps.google.com/mapfiles/ms/icons/${
+                dotColor || "green"
+              }-dot.png`,
             }}
             onClick={openLocationInfo}
           />
         )}
-        {coordinate && open && (
+        {!currentPosition && coordinate && open && (
           <InfoWindow position={coordinate} onCloseClick={openLocationInfo}>
             <Box>
               <Text variant="h2">current location</Text>

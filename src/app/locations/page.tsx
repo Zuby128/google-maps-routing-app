@@ -22,16 +22,12 @@ import React, { useEffect } from "react";
 
 function Locations() {
   const router = useRouter();
-  const { markers, deleteMarker, loading, loadMarkers } = useMarkerStore();
+  const { markers, deleteMarker, loading } = useMarkerStore();
 
   const handleDelete = (id: string) => {
     if (!id) return;
     deleteMarker(id);
   };
-
-  useEffect(() => {
-    loadMarkers();
-  }, [loadMarkers]);
 
   return (
     <Container padding={4}>

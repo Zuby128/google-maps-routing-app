@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from "uuid";
 
 interface Coordinates {
@@ -22,57 +23,49 @@ interface MarkerState {
   setCoordinate: (coordinate: Coordinates) => void;
   getMarkerById: (id: string) => MarkerProps | undefined;
   setLoading: (loading: boolean) => void;
-  loadMarkers: () => void;
 }
 
-export const useMarkerStore = create<MarkerState>((set, get) => ({
-  markers: [],
-  coordinate: null,
-  loading: true,
+export const useMarkerStore = create<MarkerState>()(
+  persist(
+    (set, get) => ({
+      markers: [],
+      coordinate: null,
+      loading: false,
 
-  setLoading: (loading: boolean) => set({ loading }),
+      setLoading: (loading: boolean) => set({ loading }),
 
-  loadMarkers: () => {
-    set({ loading: true });
-    if (typeof window !== "undefined") {
-      const storedMarkers = JSON.parse(localStorage.getItem("markers") || "[]");
-      set({ markers: storedMarkers, loading: false });
+      addMarker: (marker: Omit<MarkerProps, "id">) => {
+        set({ loading: true });
+        const newMarker: MarkerProps = { ...marker, id: uuidv4() };
+        const updatedMarkers = [...get().markers, newMarker];
+        set({ markers: updatedMarkers, loading: false });
+      },
+
+      updateMarker: (updatedMarker: MarkerProps) => {
+        set({ loading: true });
+        const updatedMarkers = get().markers.map((marker) =>
+          marker.id === updatedMarker.id ? updatedMarker : marker
+        );
+        set({ markers: updatedMarkers, loading: false });
+      },
+
+      deleteMarker: (id: string) => {
+        set({ loading: true });
+        const updatedMarkers = get().markers.filter(
+          (marker) => marker.id !== id
+        );
+        set({ markers: updatedMarkers, loading: false });
+      },
+
+      setCoordinate: (coordinate: Coordinates) => set({ coordinate }),
+
+      getMarkerById: (id: string) => {
+        return get().markers.find((marker) => marker.id === id);
+      },
+    }),
+    {
+      name: "marker-storage", // localStorage key
+      getStorage: () => localStorage, // default is localStorage
     }
-  },
-
-  addMarker: (marker: Omit<MarkerProps, "id">) => {
-    set({ loading: true });
-    const newMarker: MarkerProps = { ...marker, id: uuidv4() };
-    const updatedMarkers = [...get().markers, newMarker];
-    if (typeof window !== "undefined") {
-      localStorage.setItem("markers", JSON.stringify(updatedMarkers));
-    }
-    set({ markers: updatedMarkers, loading: false });
-  },
-
-  updateMarker: (updatedMarker: MarkerProps) => {
-    set({ loading: true });
-    const updatedMarkers = get().markers.map((marker) =>
-      marker.id === updatedMarker.id ? updatedMarker : marker
-    );
-    if (typeof window !== "undefined") {
-      localStorage.setItem("markers", JSON.stringify(updatedMarkers));
-    }
-    set({ markers: updatedMarkers, loading: false });
-  },
-
-  deleteMarker: (id: string) => {
-    set({ loading: true });
-    const updatedMarkers = get().markers.filter((marker) => marker.id !== id);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("markers", JSON.stringify(updatedMarkers));
-    }
-    set({ markers: updatedMarkers, loading: false });
-  },
-
-  setCoordinate: (coordinate: Coordinates) => set({ coordinate }),
-
-  getMarkerById: (id: string) => {
-    return get().markers.find((marker) => marker.id === id);
-  },
-}));
+  )
+);
