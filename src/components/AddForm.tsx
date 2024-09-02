@@ -27,9 +27,15 @@ interface Props {
   coordinate: Coordinates | null;
   id?: string;
   setDotColor?: React.Dispatch<React.SetStateAction<string>>;
+  setCoordinate?: React.Dispatch<React.SetStateAction<Coordinates>>;
 }
 
-const AddForm: React.FC<Props> = ({ coordinate, id, setDotColor }) => {
+const AddForm: React.FC<Props> = ({
+  coordinate,
+  id,
+  setDotColor,
+  setCoordinate,
+}) => {
   const { addMarker, updateMarker, getMarkerById } = useMarkerStore();
   const [initialValues, setInitialValues] = useState<MarkerProps>(initialValue);
 
@@ -44,6 +50,10 @@ const AddForm: React.FC<Props> = ({ coordinate, id, setDotColor }) => {
     if (id) {
       const marker = getMarkerById(id);
       marker ? formik.setValues(marker) : setInitialValues(initialValue);
+      setCoordinate!({
+        lat: marker?.lat as number,
+        lng: marker?.lng as number,
+      });
     } else {
       setInitialValues(initialValue);
     }
@@ -58,12 +68,11 @@ const AddForm: React.FC<Props> = ({ coordinate, id, setDotColor }) => {
           updateMarker({ ...values, id });
         } else {
           addMarker(values);
+          setTimeout(() => {
+            formik.resetForm();
+          }, 200);
         }
-
-        setTimeout(() => {
-          formik.resetForm();
-          toast.success("SUCCESS", { duration: 2000 });
-        }, 200);
+        toast.success("SUCCESS", { duration: 2000 });
       } catch (error) {
         toast.error("SOMETHING WENT WRONG", { duration: 2000 });
       }
