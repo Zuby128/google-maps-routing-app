@@ -78,28 +78,49 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
     );
   };
 
-  const sortMarkersByDistance = () => {
+  const findShortestRoute = () => {
     if (!coordinate) return [];
 
-    return markers
-      .map((marker) => ({
-        ...marker,
-        distance: calculateDistance(coordinate, {
-          lat: marker.lat,
-          lng: marker.lng,
-        }),
-      }))
-      .sort((a, b) => a.distance - b.distance)
-      .map((marker) => ({
-        lat: marker.lat,
-        lng: marker.lng,
-      }));
+    const visited = Array(markers.length).fill(false);
+    let currentLocation = coordinate;
+    const route = [currentLocation];
+
+    for (let i = 0; i < markers.length; i++) {
+      let nearestLocation = null;
+      let nearestDistance = Infinity;
+
+      markers.forEach((marker, index) => {
+        if (!visited[index]) {
+          const distance = calculateDistance(currentLocation, {
+            lat: marker.lat,
+            lng: marker.lng,
+          });
+          if (distance < nearestDistance) {
+            nearestDistance = distance;
+            nearestLocation = { lat: marker.lat, lng: marker.lng };
+          }
+        }
+      });
+
+      if (nearestLocation) {
+        route.push(nearestLocation);
+        currentLocation = nearestLocation;
+        visited[
+          markers.findIndex(
+            (marker) =>
+              marker.lat === nearestLocation!?.lat &&
+              marker.lng === nearestLocation?.lng
+          )
+        ] = true;
+      }
+    }
+
+    return route;
   };
 
   const onSetPath = () => {
     if (!coordinate) return;
-    const sortedPath = sortMarkersByDistance();
-    sortedPath.unshift(coordinate);
+    const sortedPath = findShortestRoute();
     setPath(sortedPath);
   };
 
@@ -109,7 +130,7 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
 
   useEffect(() => {
     onSetPath();
-  }, [coordinate]);
+  }, [coordinate, markers]);
 
   useEffect(() => {
     if (pathname === "/locations-map") {
