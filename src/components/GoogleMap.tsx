@@ -117,6 +117,14 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
     }
   }, []);
 
+  const onClickMap = (e: google.maps.MapMouseEvent) => {
+    if (currentPosition) return;
+    setCoordinate!({
+      lat: e.latLng?.lat() as number,
+      lng: e.latLng?.lng() as number,
+    });
+  };
+
   return (
     <Container maxW={"1200px"}>
       <GoogleMap
@@ -127,12 +135,7 @@ const GoogleMapComponent: React.FC<MapComponentProps> = ({
         }}
         zoom={defaultMapZoom}
         options={defaultMapOptions}
-        onClick={(e: google.maps.MapMouseEvent) =>
-          setCoordinate!({
-            lat: e.latLng?.lat() as number,
-            lng: e.latLng?.lng() as number,
-          })
-        }
+        onClick={onClickMap}
       >
         {markers.map((marker) => (
           <Marker
