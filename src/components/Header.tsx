@@ -11,9 +11,9 @@ import {
   Container,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-import { Image } from "@chakra-ui/next-js";
 import { NAV_MENU } from "../utils/NavMenu";
 import { ReactNode } from "react";
+import { Image } from "@chakra-ui/react";
 import Link from "next/link";
 
 interface Props {
@@ -47,8 +47,8 @@ export default function Header() {
                 <Box marginLeft={"auto"} marginRight={"auto"}>
                   <Link href={"/"}>
                     <Image
-                      src="/images/yuka-logo.png"
-                      alt="yuka-logo"
+                      src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSMTBaXYGjYC1VqDBlVcMIcmyl6yeuI4d9dmpITj2fORSWDzELeTMLG-bAYrA0ZZK04rw&usqp=CAU"
+                      alt="app-logo"
                       width={120}
                       height={30}
                     />
