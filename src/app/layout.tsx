@@ -5,7 +5,7 @@ import { Container } from "@chakra-ui/react";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "YUKAtech",
+  title: "Route",
   description: "Technical Assessment",
 };
 
